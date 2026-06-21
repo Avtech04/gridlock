@@ -56,13 +56,12 @@ The source-code zip does not include large `.pt` model files. They are supplied 
 
 Required model package:
 
-# Required Zip Link: https://drive.google.com/file/d/1URp7Vl3CkXNioBIumKxJdScc5fAQXBuQ/view?usp=sharing
-
 ```text
 submission/gridlock_model_weights_with_paths.zip
 ```
 
 If the weights are shared through Google Drive, download that zip and extract it from the project root:
+Required Zip Link: https://drive.google.com/file/d/1URp7Vl3CkXNioBIumKxJdScc5fAQXBuQ/view?usp=sharing
 
 ```bash
 unzip gridlock_model_weights_with_paths.zip -d .

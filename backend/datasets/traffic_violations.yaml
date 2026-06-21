@@ -1,0 +1,32 @@
+# YOLO dataset config for the fine-tuned traffic-violation detector.
+#
+# Replace the paths below with your labelled dataset directories.
+# Expected structure:
+# datasets/traffic_violations/
+#   images/train/*.jpg
+#   images/val/*.jpg
+#   labels/train/*.txt
+#   labels/val/*.txt
+
+path: datasets/traffic_violations
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: car
+  1: motorcycle
+  2: bus
+  3: truck
+  4: auto_rickshaw
+  5: bicycle
+  6: person
+  7: traffic_light
+  8: stop_sign
+  9: helmet
+  10: no_helmet
+  11: seatbelt
+  12: no_seatbelt
+  13: license_plate
+  14: stop_line
+  15: no_parking_sign

@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Gridlock AI Enforcer</title>
+    <link rel="stylesheet" href="/ui/styles.css?v=command-center-20260621-9" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">G</div>
+          <div>
+            <h1>Gridlock AI</h1>
+            <p>Flipkart Hackathon Build</p>
+          </div>
+        </div>
+        <nav class="nav">
+          <button class="nav-item active" data-view="analyze"><span class="nav-icon scan"></span>Analyze</button>
+          <button class="nav-item" data-view="records"><span class="nav-icon records"></span>Records</button>
+          <button class="nav-item" data-view="analytics"><span class="nav-icon analytics"></span>Analytics</button>
+          <button class="nav-item" data-view="performance"><span class="nav-icon target"></span>Performance</button>
+          <button class="nav-item" data-view="config"><span class="nav-icon config"></span>Config</button>
+        </nav>
+        <div class="coverage-card">
+          <span>Detection Coverage</span>
+          <div class="coverage-grid">
+            <b>Helmet</b><b>Plate</b><b>Signal</b><b>Stop line</b><b>Parking</b><b>Wrong side</b>
+          </div>
+        </div>
+        <div class="system-card">
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <strong id="systemState">Checking system</strong>
+            <p id="systemDetail">Connecting to backend</p>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section id="view-analyze" class="view active">
+          <header class="page-header hero-header">
+            <div>
+              <span class="eyebrow">Computer Vision Traffic Intelligence</span>
+              <h2>AI Violation Command Center</h2>
+              <p>Analyze a traffic frame, extract number plates, classify violations, and generate review-ready evidence.</p>
+              <div class="violation-chips">
+                <span>Helmet</span>
+                <span>Seatbelt</span>
+                <span>Triple riding</span>
+                <span>Wrong-side</span>
+                <span>Stop-line</span>
+                <span>Red-light</span>
+                <span>Parking</span>
+              </div>
+            </div>
+            <div class="hero-actions">
+              <div class="model-badge">
+                <span>Pipeline</span>
+                <strong>YOLO + OCR + Rules</strong>
+              </div>
+              <button class="secondary-btn icon-btn" id="refreshStatus"><span class="btn-icon refresh"></span>Refresh Status</button>
+            </div>
+          </header>
+
+          <div class="analysis-grid">
+            <section class="panel evidence-panel">
+              <div class="panel-header">
+                <div>
+                  <span class="panel-kicker">Live case intake</span>
+                  <h3>Evidence Input</h3>
+                </div>
+                <button class="secondary-btn icon-btn hidden" id="clearImage"><span class="btn-icon clear"></span>Clear</button>
+              </div>
+              <div class="upload-mode" role="group" aria-label="Evidence upload mode">
+                <button class="mode-tab active" data-upload-mode="image" type="button"><span class="mode-dot image"></span>Single image</button>
+                <button class="mode-tab" data-upload-mode="batch" type="button"><span class="mode-dot batch"></span>ZIP batch</button>
+              </div>
+              <div class="drop-zone" id="dropZone">
+                <input id="fileInput" type="file" accept="image/*,.zip,application/zip" hidden />
+                <div class="drop-icon"></div>
+                <h4 id="dropTitle">Drop traffic evidence here</h4>
+                <p id="dropSubtitle">JPG, PNG, or WebP traffic camera frame</p>
+              </div>
+              <div class="batch-ready hidden" id="batchReady">
+                <div class="batch-ready-icon"></div>
+                <div>
+                  <span class="panel-kicker">Batch package loaded</span>
+                  <h4 id="batchFileName">traffic_images.zip</h4>
+                  <p id="batchFileDetail">Ready to process all supported images in this archive.</p>
+                </div>
+              </div>
+              <div class="preview-shell hidden" id="previewShell">
+                <img id="previewImage" alt="Uploaded traffic evidence" />
+                <div id="boxLayer" class="box-layer"></div>
+              </div>
+              <button class="primary-btn full" id="analyzeBtn" disabled><span class="btn-icon analyze"></span>Run Analysis</button>
+            </section>
+
+            <section class="panel report-panel">
+              <div class="panel-header">
+                <div>
+                  <span class="panel-kicker">Evidence verdict</span>
+                  <h3>Violation Report</h3>
+                </div>
+                <span class="pill" id="violationCount">0 found</span>
+              </div>
+              <div class="summary-grid" id="summaryGrid">
+                <div><span>Vehicles</span><strong>-</strong></div>
+                <div><span>Pedestrians</span><strong>-</strong></div>
+                <div><span>Traffic Light</span><strong>-</strong></div>
+                <div><span>Processing</span><strong>-</strong></div>
+              </div>
+              <div id="resultList" class="result-list empty">
+                Upload an image and run analysis.
+              </div>
+              <div class="review-panel hidden" id="reviewPanel">
+                <div>
+                  <span class="panel-kicker">Human review required</span>
+                  <strong id="reviewSummary">Remove false IDs, then approve evidence.</strong>
+                </div>
+                <div class="review-actions">
+                  <button class="secondary-btn" id="resetReviewBtn" type="button">Reset removed</button>
+                  <button class="primary-btn" id="approveSessionBtn" type="button">Approve Evidence</button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel pipeline-panel hidden" id="pipelinePanel">
+            <div class="panel-header">
+              <div>
+                <span class="panel-kicker">Audit trail</span>
+                <h3>Pipeline Details</h3>
+              </div>
+              <a id="evidenceLink" class="link-btn icon-btn" href="#" target="_blank" rel="noreferrer"><span class="btn-icon open"></span>Open Evidence</a>
+            </div>
+            <div class="pipeline-grid" id="pipelineGrid"></div>
+          </section>
+
+          <section class="panel batch-panel hidden" id="batchPanel">
+            <div class="panel-header">
+              <div>
+                <span class="panel-kicker">Batch evidence queue</span>
+                <h3>ZIP Analysis Results</h3>
+              </div>
+              <div class="batch-header-actions">
+                <span class="pill neutral" id="batchCount">0 images</span>
+                <button class="primary-btn" id="approveBatchBtn" type="button">Approve Batch</button>
+              </div>
+            </div>
+            <div class="batch-stats" id="batchStats"></div>
+            <div class="batch-results" id="batchResults"></div>
+          </section>
+
+          <section class="panel secondary-lab">
+            <div class="panel-header">
+              <div>
+                <span class="panel-kicker">Optional lab mode</span>
+                <h3>Video Tracking Enforcement</h3>
+              </div>
+              <span class="pill neutral">Temporal rules</span>
+            </div>
+            <div class="video-grid">
+              <div>
+                <div class="drop-zone compact" id="videoDropZone">
+                  <input id="videoFileInput" type="file" accept="video/*" hidden />
+                  <div class="drop-icon video"></div>
+                  <h4>Drop a video here</h4>
+                  <p>MP4, MOV, WebM, AVI, or MKV</p>
+                </div>
+                <div class="video-preview-shell hidden" id="videoPreviewShell">
+                  <video id="videoPreview" controls muted></video>
+                  <button class="secondary-btn full" id="clearVideo">Clear Video</button>
+                </div>
+                <button class="primary-btn full" id="analyzeVideoBtn" disabled><span class="btn-icon video"></span>Run Video Tracking</button>
+              </div>
+              <div>
+                <div class="summary-grid" id="videoSummaryGrid">
+                  <div><span>Tracks</span><strong>-</strong></div>
+                  <div><span>Frames</span><strong>-</strong></div>
+                  <div><span>Traffic Light</span><strong>-</strong></div>
+                  <div><span>Processing</span><strong>-</strong></div>
+                </div>
+                <div id="videoResultList" class="result-list empty">
+                  Upload a video and run tracking.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel hidden" id="videoPipelinePanel">
+            <div class="panel-header">
+              <h3>Video Evidence</h3>
+              <a id="videoEvidenceLink" class="link-btn" href="#" target="_blank" rel="noreferrer">Open Tracked Video</a>
+            </div>
+            <div class="video-evidence-grid">
+              <video id="annotatedVideo" class="annotated-video hidden" controls muted></video>
+              <img id="videoSummaryImage" class="video-summary-image hidden" alt="Tracked video summary frame" />
+              <div class="pipeline-grid" id="videoPipelineGrid"></div>
+            </div>
+          </section>
+        </section>
+
+        <section id="view-records" class="view">
+          <header class="page-header">
+            <div>
+              <h2>Violation Records</h2>
+              <p>Visual evidence gallery with searchable records, plates, approval status, and annotated case images.</p>
+            </div>
+            <button class="secondary-btn" id="loadRecords">Reload</button>
+          </header>
+          <section class="panel records-panel">
+            <div class="panel-header">
+              <div>
+                <span class="panel-kicker">Evidence archive</span>
+                <h3>Reviewed Violation Gallery</h3>
+              </div>
+              <span class="pill neutral" id="recordTotal">0 records</span>
+            </div>
+            <div class="toolbar records-toolbar">
+              <input id="recordSearch" class="input" placeholder="Search plate, evidence, or description" />
+              <select id="recordFilter" class="input">
+                <option value="">All types</option>
+              </select>
+            </div>
+            <div class="records-stats" id="recordsStats"></div>
+            <div class="records-gallery" id="recordsGallery">
+              <div class="result-list empty">Load records to view evidence images.</div>
+            </div>
+            <details class="records-ledger">
+              <summary>Open compact table ledger</summary>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Vehicle</th>
+                      <th>Plate</th>
+                      <th>Confidence</th>
+                      <th>Status</th>
+                      <th>Evidence</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recordsBody"></tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+        </section>
+
+        <section id="view-analytics" class="view">
+          <header class="page-header">
+            <div>
+              <h2>Analytics</h2>
+              <p>Violation intelligence, enforcement priorities, review quality, and throughput.</p>
+            </div>
+            <button class="secondary-btn" id="loadAnalytics">Reload</button>
+          </header>
+          <section class="panel intelligence-panel">
+            <div class="panel-header">
+              <div>
+                <span class="panel-kicker">AI command brief</span>
+                <h3 id="briefHeadline">Generating enforcement brief</h3>
+              </div>
+              <div class="brief-actions">
+                <span class="pill neutral" id="briefProvider">local</span>
+                <button class="secondary-btn" id="loadBrief" type="button">Refresh Brief</button>
+              </div>
+            </div>
+            <p class="brief-summary" id="briefSummary">Preparing a concise analytics interpretation for the current evidence records.</p>
+            <div class="brief-grid">
+              <article>
+                <span>Priority Actions</span>
+                <ul id="briefActions"></ul>
+              </article>
+              <article>
+                <span>Risk Signals</span>
+                <ul id="briefRisks"></ul>
+              </article>
+              <article>
+                <span>Operations</span>
+                <ul id="briefOps"></ul>
+              </article>
+              <article>
+                <span>Demo Story</span>
+                <ul id="briefNotes"></ul>
+              </article>
+            </div>
+          </section>
+          <div class="stats-grid" id="analyticsStats"></div>
+          <section class="panel">
+            <div class="panel-header"><h3>Violations by Type</h3></div>
+            <div id="typeBars" class="bars"></div>
+          </section>
+        </section>
+
+        <section id="view-performance" class="view">
+          <header class="page-header">
+            <div>
+              <h2>Performance</h2>
+              <p>Real accuracy metrics require labelled ground truth.</p>
+            </div>
+            <button class="secondary-btn" id="loadPerformance">Reload</button>
+          </header>
+          <section class="panel" id="performancePanel"></section>
+        </section>
+
+        <section id="view-config" class="view">
+          <header class="page-header">
+            <div>
+              <h2>Configuration</h2>
+              <p>Optional vision review key and architecture details.</p>
+            </div>
+          </header>
+          <section class="panel">
+            <div class="panel-header"><h3>Optional Vision Review</h3></div>
+            <div class="key-row">
+              <input id="apiKeyInput" class="input" type="password" placeholder="Groq gsk_... or Gemini key" />
+              <button class="primary-btn" id="saveKey">Save Key</button>
+            </div>
+            <p class="muted" id="configMessage">The detector works without an API key. Add one only for ambiguous-case review.</p>
+          </section>
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Camera Calibration</h3>
+              <button class="secondary-btn" id="loadCalibration">Reload</button>
+            </div>
+            <div class="calibration-grid">
+              <label class="check-row">
+                <input id="stopLineEnabled" type="checkbox" />
+                <span>Stop-line rule</span>
+              </label>
+              <label class="check-row">
+                <input id="redLightEnabled" type="checkbox" />
+                <span>Red-light rule</span>
+              </label>
+              <label class="check-row">
+                <input id="parkingEnabled" type="checkbox" />
+                <span>Illegal-parking ROI rule</span>
+              </label>
+              <label class="check-row">
+                <input id="wrongSideEnabled" type="checkbox" />
+                <span>Wrong-side tracker flag</span>
+              </label>
+              <label>
+                <span>Stop line Y%</span>
+                <input id="stopLineY" class="input" type="number" min="0" max="100" step="1" />
+              </label>
+              <label>
+                <span>Red-light gate Y%</span>
+                <input id="redLightY" class="input" type="number" min="0" max="100" step="1" />
+              </label>
+              <label>
+                <span>Expected lane direction</span>
+                <select id="laneDirection" class="input">
+                  <option value="left_to_right">Left to right</option>
+                  <option value="right_to_left">Right to left</option>
+                </select>
+              </label>
+              <label>
+                <span>Signal state source</span>
+                <select id="signalOverride" class="input">
+                  <option value="auto">Auto detector</option>
+                  <option value="red">Force red</option>
+                  <option value="yellow">Force yellow</option>
+                  <option value="green">Force green</option>
+                  <option value="not_visible">Not visible</option>
+                </select>
+              </label>
+              <label>
+                <span>Parking dwell seconds</span>
+                <input id="parkingDwellSeconds" class="input" type="number" min="1" max="120" step="1" />
+              </label>
+              <label>
+                <span>Video sample FPS</span>
+                <input id="trackingSampleFps" class="input" type="number" min="0.25" max="5" step="0.25" />
+              </label>
+              <label>
+                <span>Max sampled frames</span>
+                <input id="trackingMaxFrames" class="input" type="number" min="8" max="240" step="1" />
+              </label>
+              <label>
+                <span>Wrong-side travel %</span>
+                <input id="wrongSideMinTravel" class="input" type="number" min="2" max="40" step="1" />
+              </label>
+            </div>
+            <div class="roi-editor">
+              <strong>No-parking ROI</strong>
+              <div class="roi-grid">
+                <label><span>X%</span><input id="roiX" class="input" type="number" min="0" max="100" step="1" /></label>
+                <label><span>Y%</span><input id="roiY" class="input" type="number" min="0" max="100" step="1" /></label>
+                <label><span>W%</span><input id="roiW" class="input" type="number" min="0" max="100" step="1" /></label>
+                <label><span>H%</span><input id="roiH" class="input" type="number" min="0" max="100" step="1" /></label>
+              </div>
+            </div>
+            <div class="calibration-preview-tools">
+              <div class="toolbar">
+                <button class="secondary-btn" id="chooseCalibrationPreview">Choose Preview Frame</button>
+                <input id="calibrationPreviewInput" type="file" accept="image/*" hidden />
+                <select id="calibrationTool" class="input">
+                  <option value="stop">Stop line</option>
+                  <option value="red">Red-light gate</option>
+                  <option value="parking">No-parking ROI</option>
+                </select>
+              </div>
+              <div class="calibration-preview hidden" id="calibrationPreviewShell">
+                <img id="calibrationPreviewImage" alt="Calibration preview frame" />
+                <div id="calibrationOverlay" class="calibration-overlay"></div>
+              </div>
+            </div>
+            <div class="key-row">
+              <button class="primary-btn" id="saveCalibration">Save Calibration</button>
+              <p class="muted" id="calibrationMessage">Use these only for a fixed camera angle.</p>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h3>Architecture</h3></div>
+            <div class="architecture-list">
+              <div><strong>Primary detector</strong><span>Fine-tuned YOLO weights, YOLO26 fallback, offline YOLOv3 fallback</span></div>
+              <div><strong>Violation logic</strong><span>Detector-grounded rules with calibrated red-light and stop-line gates</span></div>
+              <div><strong>License plates</strong><span>Plate detector plus optional OCR engines</span></div>
+              <div><strong>Evaluation</strong><span>Ground-truth JSON for Precision, Recall, F1, and mAP50</span></div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="/ui/app.js?v=command-center-20260621-9"></script>
+  </body>
+</html>

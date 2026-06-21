@@ -1,0 +1,49 @@
+# Python/runtime
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+backend/venv/
+.env
+.env.*
+
+# Node/runtime
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Local databases and generated evidence
+*.db
+backend/violations.db
+backend/uploads/
+backend/annotated/
+runs/
+backend/runs/
+
+# Model weights are supplied separately because source upload limit is small.
+*.pt
+*.pth
+*.onnx
+*.engine
+*.weights
+!backend/models/README.md
+!backend/models/.gitkeep
+
+# Large datasets and training artifacts
+data/
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Generated release zips
+submission/*.zip
+release/*.zip

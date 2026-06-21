@@ -1,0 +1,64 @@
+model:
+  candidates:
+  - models/traffic_yolo26s_best.pt
+  - models/helmet_violations_best.pt
+  - models/traffic_yolo11s_best.pt
+  - yolo26s.pt
+  - yolo11s.pt
+  - yolov8s.pt
+  image_size: 960
+  confidence_threshold: 0.18
+  vehicle_confidence: 0.45
+  safety_confidence: 0.18
+  plate_confidence: 0.3
+  stop_line_confidence: 0.3
+  sign_confidence: 0.6
+  violation_confidence: 0.3
+  max_det: 300
+  tta_augment: false
+opencv_fallback:
+  enabled: true
+  cfg: yolov3-tiny.cfg
+  weights: yolov3-tiny.weights
+  names: coco.names
+  input_size: 416
+  confidence_threshold: 0.45
+  nms_iou: 0.45
+violation:
+  ai_min_confidence: 0.75
+  require_yolo_anchor_for_ai: true
+  yolo_anchor_iou: 0.12
+  duplicate_iou: 0.5
+  triple_riding_min_riders: 3
+calibration:
+  min_auto_stop_line_y_percent: 52.0
+  stop_line_y_percent: 65.0
+  stop_line_rule_enabled: false
+  red_light_vehicle_bottom_y_percent: 65.0
+  red_light_rule_enabled: false
+  illegal_parking_rule_enabled: false
+  wrong_side_enabled: false
+  expected_lane_direction: left_to_right
+  illegal_parking_rois: []
+  illegal_parking_dwell_seconds: 3.0
+  tracking_sample_fps: 2.0
+  tracking_max_frames: 40
+  wrong_side_min_travel_percent: 6.0
+  traffic_light_state_override: auto
+  auto_scene_rules_enabled: true
+ocr:
+  enabled: true
+  min_text_confidence: 0.45
+  engine_order:
+  - paddleocr
+  - easyocr
+  - pytesseract
+evaluation:
+  iou_threshold: 0.5
+  confidence_thresholds:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.7
+  - 0.8
+  - 0.9
